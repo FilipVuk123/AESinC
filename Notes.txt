@@ -1,0 +1,44 @@
+
+
+The file aes.c you've shared is an implementation of the Advanced Encryption Standard (AES) algorithm. AES is a symmetric encryption algorithm widely used across the globe to secure data. This specific implementation supports various modes of operation, including ECB (Electronic Codebook), CTR (Counter), and CBC (Cipher Block Chaining). Let's break down the key components and how they work together to encrypt and decrypt data:
+
+Includes and Definitions: The file starts by including necessary headers and defining constants such as Nb, Nk, and Nr, which are essential for AES's operation. Nb is the number of columns (32-bit words) comprising the State (always 4 for AES). Nk and Nr vary depending on the key size (128, 192, or 256 bits), affecting the number of rounds and key material size.
+
+Key Expansion: AES requires a set of round keys for each encryption/decryption round, generated from the initial key. The KeyExpansion function prepares these round keys, using the original encryption key. It involves operations like RotWord, SubWord, and an XOR with a round constant (Rcon).
+
+Core Transformation Functions: The encryption process in AES involves several transformations:
+
+SubBytes: A non-linear substitution step where bytes are replaced according to a fixed table (sbox).
+ShiftRows: A transposition step where each row of the state is shifted cyclically a certain number of steps.
+MixColumns: A mixing operation which operates on the columns of the state, combining the four bytes in each column.
+AddRoundKey: A simple bitwise XOR of the current state with a portion of the expanded key.
+Encryption and Decryption: The Cipher function performs the actual encryption. It begins with an AddRoundKey step, followed by several rounds of SubBytes, ShiftRows, MixColumns (except the final round), and AddRoundKey. Decryption is the inverse process, with steps performed in reverse order and using inverse functions like InvMixColumns, InvSubBytes, and InvShiftRows.
+
+Modes of Operation:
+
+ECB Mode: The simplest form of encryption, where each block of plaintext is encrypted separately. This mode is generally not recommended for use in secure applications due to patterns being visible in the ciphertext.
+CBC Mode: Each block of plaintext is XORed with the previous ciphertext block before being encrypted. This mode uses an initialization vector (IV) to make each message unique.
+CTR Mode: Converts a block cipher into a stream cipher. It encrypts successive values of a "counter" and XORs the result with the plaintext to produce the ciphertext. The counter is incremented for each block.
+This implementation also includes utility functions like XorWithIv for CBC mode and mechanisms to handle the encryption and decryption buffers for different modes.
+
+To understand this on a practical level, consider a simple example of encrypting a plaintext "Hello World" under ECB mode. Initially, the plaintext is padded to fit the block size (16 bytes for AES), and an initial key is expanded using KeyExpansion. Then, for each block of plaintext, Cipher performs the transformation steps, resulting in an encrypted block. This process is repeated for each plaintext block.
+
+Understanding AES deeply requires familiarity with its mathematical foundations, including finite field arithmetic used in MixColumns and SubBytes. However, at a high level, the flow of operations and the purpose of each function in this file provide a solid foundation for beginning to work with or implement AES in software.
+
+The aes.c file contains several functions integral to the AES encryption process. Here's a detailed explanation of each key function and its purpose:
+
+KeyExpansion: This function generates a series of Round Keys from the Cipher Key. AES uses different numbers of rounds for encryption based on the key size. This function expands the user-supplied key to an array that will be used in each round of the encryption or decryption process.
+
+AddRoundKey: In AES, the AddRoundKey step combines the Round Key with the state array. This function XORs (bitwise exclusive OR) the Round Key with the state array to perform this step. This operation is reversible, which is essential for both encryption and decryption processes.
+
+SubBytes: The SubBytes function is a non-linear substitution step where each byte in the state array is replaced with another according to a lookup table (S-box). This step provides the AES algorithm with its property of confusion, making it difficult to find correlations between the key and the ciphertext.
+
+ShiftRows: The ShiftRows step is a transposition step where each row in the state array is shifted cyclically a certain number of steps. This step ensures that the ciphertext does not have any linear patterns related to the plaintext.
+
+MixColumns: This function is a mixing operation which operates on the columns of the state, combining the four bytes in each column. It provides diffusion in AES, making the relationship between the plaintext and the ciphertext complex and involved.
+
+Cipher: This is the main function that integrates all the steps to encrypt a single block of plaintext. It initializes the state array with the block of plaintext and then executes a series of transformations (SubBytes, ShiftRows, MixColumns) for a number of rounds. After the final round, MixColumns is skipped, and AddRoundKey is applied to produce the block of ciphertext.
+
+InvCipher: This function performs the decryption process. It is essentially the inverse of the Cipher function, applying the inverse operations in the reverse order to transform the ciphertext back into the original plaintext.
+
+Each function is designed to perform specific transformations on the data, ensuring the security and efficiency of the AES algorithm. Together, they provide a robust encryption mechanism that's widely used in various security protocols and systems.
