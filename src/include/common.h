@@ -32,4 +32,6 @@ void create_round_key(unsigned char *expanded_key, unsigned char *round_key);
 
 unsigned char galois_multiplication(unsigned char a, unsigned char b);
 
+void printBufferHex(unsigned char* buffer, int size);
+
 #endif // __COMMON_H__

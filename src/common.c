@@ -228,3 +228,10 @@ unsigned char galois_multiplication(unsigned char a, unsigned char b)
     }
     return p;
 }
+
+void printBufferHex(unsigned char* buffer, int size){
+    for (int i = 0; i < size; i++)
+    {
+        printf("%2.2x%c", buffer[i], ((i + 1) % size) ? ' ' : '\n');
+    }
+}
