@@ -9,6 +9,6 @@ void mix_columns(unsigned char *state);
 
 void cipher(unsigned char *state, unsigned char *expanded_key, int n_rounds);
 
-void aes_encrypt(unsigned char *input, unsigned char *output, unsigned char *key, enum keySize size);
+void aes_encrypt(unsigned char *input, unsigned char *output, unsigned char *key, enum key_size size);
 
 #endif // __ENCRYPT_H__

@@ -96,24 +96,9 @@ void cipher(unsigned char *state, unsigned char *expanded_key, int n_rounds)
 }
 
 
-void aes_encrypt(unsigned char *input, unsigned char *output, unsigned char *key, enum keySize size)
+void aes_encrypt(unsigned char *input, unsigned char *output, unsigned char *key, enum key_size size)
 {
-    int n_rounds;
-    switch (size)
-    {
-    case SIZE_16:
-        n_rounds = 10;
-        break;
-    case SIZE_24:
-        n_rounds = 12;
-        break;
-    case SIZE_32:
-        n_rounds = 14;
-        break;
-    default:
-        n_rounds = 10;
-        break;
-    }
+    int n_rounds = get_nr(size);
 
     unsigned char block[16];
 

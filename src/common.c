@@ -82,32 +82,39 @@ void key_schedule(unsigned char *word, int iter)
     word[0] = word[0] ^ get_r_const(iter);
 }
 
-
-
-void key_expansion(unsigned char *expanded_key, unsigned char *key, enum keySize size)
-{
-    printf("Key expansion!");
-    int n_k;
-    int n_rounds;
+int get_nk(enum key_size size){
     switch (size)
     {
     case SIZE_16:
-        n_k = 4;
-        n_rounds = 10;
-        break;
+        return 4;
     case SIZE_24:
-        n_k = 6;
-        n_rounds = 12;
-        break;
+        return 6;
     case SIZE_32:
-        n_k = 8;
-        n_rounds = 14;
-        break;
+        return 8;
     default:
-        n_k = 4;
-        n_rounds = 10;
-        break;
+        return -1;
     }
+}
+
+int get_nr(enum key_size size){
+    switch (size)
+    {
+    case SIZE_16:
+        return 10;
+    case SIZE_24:
+        return 12;
+    case SIZE_32:
+        return 14;
+    default:
+        return -1;
+    }
+}
+
+
+void key_expansion(unsigned char *expanded_key, unsigned char *key, enum key_size size)
+{
+    int n_rounds = get_nr(size);
+    int n_k = get_nk(size);
 
     for (int i = 0; i <= n_k; i++)
     {
@@ -143,9 +150,8 @@ void key_expansion(unsigned char *expanded_key, unsigned char *key, enum keySize
     }
 }
 
-void key_expansion_2(unsigned char *expanded_key, unsigned char *key, enum keySize size, int expanded_key_size)
+void key_expansion_2(unsigned char *expanded_key, unsigned char *key, enum key_size size, int expanded_key_size)
 {
-    printf("Key expansion 2!");
     int currentSize = 0;
 
     for (int i = 0; i < size; i++)
