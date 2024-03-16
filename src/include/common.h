@@ -5,7 +5,9 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
+#define AES_BLOCK_SIZE 16
 
 enum key_size{
     SIZE_16 = 16,   // 128
@@ -20,6 +22,7 @@ int get_nr(enum key_size size);
 unsigned char get_r_const(unsigned char ch);
 unsigned char get_s_box(unsigned char ch);
 unsigned char get_rs_box(unsigned char ch);
+
 void key_schedule(unsigned char *word, int iter);
 void rotate_word(unsigned char *word);
 void rotate_word_inv(unsigned char *word);
@@ -30,7 +33,7 @@ void key_expansion_2(unsigned char *expandedKey, unsigned char *key, enum key_si
 
 void create_round_key(unsigned char *expanded_key, unsigned char *round_key);
 
-unsigned char galois_multiplication(unsigned char a, unsigned char b);
+unsigned char gf_mult(unsigned char a, unsigned char b);
 
 void printBufferHex(unsigned char* buffer, int size);
 

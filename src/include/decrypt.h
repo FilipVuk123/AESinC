@@ -10,6 +10,6 @@ void mix_columns_inv(unsigned char *state);
 
 void cipher_inv(unsigned char *state, unsigned char *expanded_key, int n_rounds);
 
-void aes_decrypt(unsigned char *input, unsigned char *output, unsigned char *key, enum key_size size);
+void aes_decrypt_block(unsigned char *input, unsigned char *output, unsigned char *key, enum key_size size);
 
 #endif // __DECRYPT_H__

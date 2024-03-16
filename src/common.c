@@ -176,7 +176,7 @@ void key_expansion_2(unsigned char *expanded_key, unsigned char *key, enum key_s
             rconIteration++;
         }
 
-        if (size == SIZE_32 && ((currentSize % size) == 16))
+        if (size == SIZE_32 && ((currentSize % size) == AES_BLOCK_SIZE))
         {
             for (int i = 0; i < 4; i++)
             {
@@ -194,7 +194,7 @@ void key_expansion_2(unsigned char *expanded_key, unsigned char *key, enum key_s
 
 void add_round_key(unsigned char *state, unsigned char *round_key)
 {
-    for (int i = 0; i < 16; i++)
+    for (int i = 0; i < AES_BLOCK_SIZE; i++)
     {
         state[i] = state[i] ^ round_key[i];
     }
@@ -212,7 +212,7 @@ void create_round_key(unsigned char *expanded_key, unsigned char *round_key)
 }
 
 
-unsigned char galois_multiplication(unsigned char a, unsigned char b)
+unsigned char gf_mult(unsigned char a, unsigned char b)
 {
     unsigned char p = 0;
     unsigned char hi_bit_set;

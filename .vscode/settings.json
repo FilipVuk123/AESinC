@@ -1,5 +1,7 @@
 {
     "files.associations": {
-        "encrypt.h": "c"
+        "encrypt.h": "c",
+        "modes.h": "c",
+        "common.h": "c"
     }
 }
