@@ -44,15 +44,14 @@ int aes_cbc_decrypt(unsigned char *in, int in_size, unsigned char* key, enum key
 }
 
 
-void increment_nonce(unsigned char *nonce) {
+static void increment_nonce(unsigned char *nonce) {
     int i;
     for (i = AES_BLOCK_SIZE - 1; i >= 0; i--) {
-        if (++nonce[i] != 0) {
-            break;  // If no overflow, exit loop
+        nonce[i]++;
+        if (nonce[i] != 0) {
+            break; 
         }
     }
-
-    // If all bytes overflowed, wrap around and start from the beginning
     if (i < 0) {
         memset(nonce, 0, AES_BLOCK_SIZE);
     }
