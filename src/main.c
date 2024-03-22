@@ -92,25 +92,27 @@ int main(int argc, char *argv[])
     unsigned char key3[] = {"myfirstaescipher"};
     unsigned char nonce[] = {"veryfirstinitvez"};
 
-    unsigned char plaintext3[] = {"abcdef1234567890filip123321abcdeabcdef1234567890filip123321abcde"};
+    unsigned char plaintext3[] = {"abcdef1234567890filip123321abcdeabcdef1234567890filip123321abcde!!!"};
 
-    unsigned char ciphertext3[64];
+    int outsize;
 
-    unsigned char decryptedtext3[64];
+    unsigned char ciphertext3[67];
+
+    unsigned char decryptedtext3[67];
 
     printf("\nPlaintext (HEX format):\n");
-    printBufferHex(plaintext3, 64);
+    printBufferHex(plaintext3, 67);
 
-    aes_ctr_xxcrypt(plaintext3, 64, key3, SIZE_16, nonce, ciphertext3, NULL);
+    aes_ofb_xxcrypt(plaintext3, 67, key3, SIZE_16, nonce, ciphertext3, &outsize);
 
     printf("\nCiphertext (HEX format):\n");
-    printBufferHex(ciphertext3, 64);
+    printBufferHex(ciphertext3, 67);
 
 
-    aes_ctr_xxcrypt(ciphertext3, 64, key3, SIZE_16, nonce, decryptedtext3, NULL);
+    aes_ofb_xxcrypt(ciphertext3, 67, key3, SIZE_16, nonce, decryptedtext3, &outsize);
 
     printf("\nDecrypted text (HEX format):\n");
-    printBufferHex(decryptedtext3, 64);
+    printBufferHex(decryptedtext3, 67);
 
     return 0;
 
