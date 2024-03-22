@@ -25,7 +25,6 @@ int aes_cbc_encrypt(unsigned char *in, int in_size, unsigned char* key, enum key
     unsigned char padding_buffer[16];
 
     create_PKCS7_buffer(in + (in_size - modulo), modulo, AES_BLOCK_SIZE - modulo, padding_buffer);
-    
     unsigned char tmp [16];
     
     xor_block(in, iv, AES_BLOCK_SIZE, tmp);
@@ -36,11 +35,10 @@ int aes_cbc_encrypt(unsigned char *in, int in_size, unsigned char* key, enum key
         aes_encrypt_block(tmp, out + ((i + 1) * AES_BLOCK_SIZE), key, key_size);
         *out_size += AES_BLOCK_SIZE;
     }
-    xor_block(out + num_of_blocks * AES_BLOCK_SIZE, padding_buffer, AES_BLOCK_SIZE, tmp);
+    xor_block(out + (num_of_blocks - 1) * AES_BLOCK_SIZE, padding_buffer, AES_BLOCK_SIZE, tmp);
     aes_encrypt_block(tmp, out + num_of_blocks * AES_BLOCK_SIZE, key, key_size);
     *out_size += AES_BLOCK_SIZE;
 }
-
 
 int aes_cbc_decrypt(unsigned char *in, int in_size, unsigned char* key, enum key_size key_size, unsigned char* iv, unsigned char* out, int* out_size){
     int num_of_blocks = in_size / AES_BLOCK_SIZE;
@@ -57,7 +55,7 @@ int aes_cbc_decrypt(unsigned char *in, int in_size, unsigned char* key, enum key
         xor_block(tmp, in + (i * AES_BLOCK_SIZE), AES_BLOCK_SIZE, out + ((i + 1) * AES_BLOCK_SIZE));
         *out_size += AES_BLOCK_SIZE;
     }
-    // *out_size -= out[in_size - 1];
+    *out_size -= out[in_size - 1];
 }
 
 int aes_ecb_encrypt(unsigned char* in, int in_size, unsigned char* key, enum key_size key_size, unsigned char* out, int* out_size){
