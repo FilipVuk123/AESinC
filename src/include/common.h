@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #define AES_BLOCK_SIZE 16
 
@@ -36,5 +37,9 @@ void create_round_key(unsigned char *expanded_key, unsigned char *round_key);
 unsigned char gf_mult(unsigned char a, unsigned char b);
 
 void printBufferHex(unsigned char* buffer, int size);
+
+void generate_random_bytes(unsigned char* buffer, int num_bytes);
+
+int equal_buffers(unsigned char* buf1, unsigned char* buf2, int size);
 
 #endif // __COMMON_H__

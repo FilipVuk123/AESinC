@@ -235,3 +235,20 @@ void printBufferHex(unsigned char* buffer, int size){
         printf("%2.2x%c", buffer[i], ((i + 1) % size) ? ' ' : '\n');
     }
 }
+
+void generate_random_bytes(unsigned char* buffer, int num_bytes){
+    srand(time(NULL));
+    for (int i = 0; i < num_bytes; ++i) {
+        buffer[i] = rand() % 256; 
+    }
+}
+
+
+int equal_buffers(unsigned char* buf1, unsigned char* buf2, int size){
+    for(int i = 0; i < size; i++){
+        if (buf1[i] != buf2[i])
+            return 0;
+    }
+    return 1;
+}
+
