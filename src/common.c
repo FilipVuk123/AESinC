@@ -82,7 +82,7 @@ void key_schedule(unsigned char *word, int iter)
     word[0] = word[0] ^ get_r_const(iter);
 }
 
-int get_nk(enum key_size size){
+int get_nk(enum aes_key_size size){
     switch (size)
     {
     case SIZE_16:
@@ -96,7 +96,7 @@ int get_nk(enum key_size size){
     }
 }
 
-int get_nr(enum key_size size){
+int get_nr(enum aes_key_size size){
     switch (size)
     {
     case SIZE_16:
@@ -111,7 +111,7 @@ int get_nr(enum key_size size){
 }
 
 
-void key_expansion(unsigned char *expanded_key, unsigned char *key, enum key_size size)
+void key_expansion(unsigned char *expanded_key, unsigned char *key, enum aes_key_size size)
 {
     int n_rounds = get_nr(size);
     int n_k = get_nk(size);
@@ -150,7 +150,7 @@ void key_expansion(unsigned char *expanded_key, unsigned char *key, enum key_siz
     }
 }
 
-void key_expansion_2(unsigned char *expanded_key, unsigned char *key, enum key_size size, int expanded_key_size)
+void key_expansion_2(unsigned char *expanded_key, unsigned char *key, enum aes_key_size size, int expanded_key_size)
 {
     int currentSize = 0;
 
@@ -229,7 +229,7 @@ unsigned char gf_mult(unsigned char a, unsigned char b)
     return p;
 }
 
-void printBufferHex(unsigned char* buffer, int size){
+void print_buffer_hex(unsigned char* buffer, int size){
     for (int i = 0; i < size; i++)
     {
         printf("%2.2x%c", buffer[i], ((i + 1) % size) ? ' ' : '\n');

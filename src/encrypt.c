@@ -96,23 +96,21 @@ void cipher(unsigned char *state, unsigned char *expanded_key, int n_rounds)
 }
 
 
-void aes_encrypt_block(unsigned char *input, unsigned char *output, unsigned char *key, enum key_size size)
+void aes_encrypt_block(unsigned char *input, unsigned char *output, int num_rounds, unsigned char* expanded_key)
 {
-    int n_rounds = get_nr(size);
 
     unsigned char block[AES_BLOCK_SIZE];
 
-    int expanded_key_size = (AES_BLOCK_SIZE * (n_rounds + 1));
-    unsigned char expanded_key[expanded_key_size];
+
     for (int i = 0; i < 4; i++)
     {
-        for (int j = 0; j < 4; j++)
+        for (int j = 0; j < 4; j++){   
             block[(i + (j * 4))] = input[(i * 4) + j];
+        }
     }
 
-    key_expansion(expanded_key, key, size);
 
-    cipher(block, expanded_key, n_rounds);
+    cipher(block, expanded_key, num_rounds);
 
     for (int i = 0; i < 4; i++)
     {

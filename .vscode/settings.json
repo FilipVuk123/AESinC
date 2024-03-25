@@ -2,6 +2,14 @@
     "files.associations": {
         "encrypt.h": "c",
         "modes.h": "c",
-        "common.h": "c"
+        "common.h": "c",
+        "decrypt.h": "c",
+        "array": "c",
+        "string_view": "c",
+        "format": "c",
+        "initializer_list": "c",
+        "span": "c",
+        "valarray": "c",
+        "aes.h": "c"
     }
 }

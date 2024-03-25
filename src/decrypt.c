@@ -29,8 +29,6 @@ void shift_rows_inv(unsigned char *state)
 }
 
 
-
-
 static void mix_column_inv(unsigned char *column)
 {
     unsigned char tmp[4];
@@ -98,23 +96,18 @@ void cipher_inv(unsigned char *state, unsigned char *expanded_key, int n_rounds)
     add_round_key(state, round_key);
 }
 
-void aes_decrypt_block(unsigned char *input, unsigned char *output, unsigned char *key, enum key_size size)
+void aes_decrypt_block(unsigned char *input, unsigned char *output, int num_rounds, unsigned char* expanded_key)
 {
-    int n_rounds = get_nr(size);
-
     unsigned char block[AES_BLOCK_SIZE];
 
-    int expanded_key_size = (AES_BLOCK_SIZE * (n_rounds + 1));
-    unsigned char expanded_key[expanded_key_size];
     for (int i = 0; i < 4; i++)
     {
         for (int j = 0; j < 4; j++)
             block[(i + (j * 4))] = input[(i * 4) + j];
     }
 
-    key_expansion(expanded_key, key, size);
 
-    cipher_inv(block, expanded_key, n_rounds);
+    cipher_inv(block, expanded_key, num_rounds);
 
     for (int i = 0; i < 4; i++)
     {
