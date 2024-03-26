@@ -1,35 +1,98 @@
 #include <aes.h>
 
-void aes_init(struct aes_ctx_t *ctx, unsigned char *key, enum aes_key_size key_size, enum aes_mode mode, unsigned char *iv)
+enum aes_status aes_init(struct aes_ctx_t *ctx, unsigned char *key, enum aes_key_size key_size, enum aes_mode mode, unsigned char *iv)
 {
-    // ctx->key = NULL;
-    // ctx->iv = NULL;
-    // ctx->expanded_key = NULL;
+    memset(ctx->expanded_key, 0, 240);
+    memset(ctx->key, 0, SIZE_32);
+    memset(ctx->iv, 0, AES_BLOCK_SIZE);
 
-    ctx->key = malloc(key_size);
-    memcpy(ctx->key, key, key_size);
+    if (NULL == ctx || NULL == key || NULL == iv)
+    {
+        return ERROR_INVALID_PARAMETAR;
+    }
 
-    ctx->iv = malloc(AES_BLOCK_SIZE);
-    memcpy(ctx->iv, iv, AES_BLOCK_SIZE);
+    switch (mode)
+    {
+    case CBC:
+    case CFB:
+    case CTR:
+    case ECB:
+    case OFB:
+        break;
+    default:
+        return ERROR_UNKNOWN_MODE;
+    }
 
-    ctx->n_rounds = get_nr(key_size);
-    ctx->expanded_key_size = AES_BLOCK_SIZE * (ctx->n_rounds + 1);
-    ctx->expanded_key = malloc(ctx->expanded_key_size);
-
-    key_expansion(ctx->expanded_key, ctx->key, key_size);
+    switch (key_size)
+    {
+    case SIZE_16:
+    case SIZE_24:
+    case SIZE_32:
+        break;
+    default:
+        return ERROR_UNKNOWN_KEY_SIZE;
+    }
 
     ctx->mode = mode;
     ctx->size = key_size;
+
+    ctx->n_rounds = -1;
+
+    memcpy(ctx->iv, iv, AES_BLOCK_SIZE);
+
+    memcpy(ctx->key, key, key_size);
+
+    ctx->n_rounds = get_nr(key_size);
+    ctx->expanded_key_size = AES_BLOCK_SIZE * (ctx->n_rounds + 1);
+
+    key_expansion(ctx->expanded_key, ctx->key, key_size);
+
+    return SUCCESS;
 }
 
-void aes_set_iv(struct aes_ctx_t *ctx, unsigned char *iv)
+enum aes_status aes_set_iv(struct aes_ctx_t *ctx, unsigned char *iv)
 {
-    if (ctx->iv != NULL)
-        memcpy(ctx->iv, iv, AES_BLOCK_SIZE);
+    if (NULL == iv || NULL == ctx)
+    {
+        return ERROR_INVALID_PARAMETAR;
+    }
+    memcpy(ctx->iv, iv, AES_BLOCK_SIZE);
+    return SUCCESS;
 }
 
-void aes_encrypt(struct aes_ctx_t *ctx, unsigned char *in, int in_size, unsigned char *out, int *out_size)
+enum aes_status aes_set_key(struct aes_ctx_t *ctx, unsigned char *key, enum aes_key_size key_size)
 {
+    if (NULL == key || NULL == ctx)
+    {
+        return ERROR_INVALID_PARAMETAR;
+    }
+
+    switch (key_size)
+    {
+    case SIZE_16:
+    case SIZE_24:
+    case SIZE_32:
+        break;
+    default:
+        return ERROR_UNKNOWN_KEY_SIZE;
+    }
+    memcpy(ctx->key, key, key_size);
+    ctx->size = key_size;
+
+    ctx->n_rounds = get_nr(key_size);
+    ctx->expanded_key_size = AES_BLOCK_SIZE * (ctx->n_rounds + 1);
+
+    key_expansion(ctx->expanded_key, ctx->key, key_size);
+    return SUCCESS;
+}
+
+enum aes_status aes_encrypt(struct aes_ctx_t *ctx, unsigned char *in, int in_size, unsigned char *out, int *out_size)
+{
+
+    if (NULL == in || NULL == ctx || NULL == out || NULL == out_size)
+    {
+        return ERROR_INVALID_PARAMETAR;
+    }
     switch (ctx->mode)
     {
     case CBC:
@@ -51,10 +114,16 @@ void aes_encrypt(struct aes_ctx_t *ctx, unsigned char *in, int in_size, unsigned
     default:
         break;
     }
+    return SUCCESS;
 }
 
-void aes_decrypt(struct aes_ctx_t *ctx, unsigned char *in, int in_size, unsigned char *out, int *out_size)
+enum aes_status aes_decrypt(struct aes_ctx_t *ctx, unsigned char *in, int in_size, unsigned char *out, int *out_size)
 {
+    if (NULL == in || NULL == ctx || NULL == out || NULL == out_size)
+    {
+        return ERROR_INVALID_PARAMETAR;
+    }
+
     switch (ctx->mode)
     {
     case CBC:
@@ -76,36 +145,33 @@ void aes_decrypt(struct aes_ctx_t *ctx, unsigned char *in, int in_size, unsigned
     default:
         break;
     }
+    return SUCCESS;
 }
 
-void aes_destroy(struct aes_ctx_t *ctx)
-{
-    if (ctx->key != NULL){
-        free(ctx->key);
-        ctx->key = NULL;
-    }
-    if (ctx->iv != NULL){
-        free(ctx->iv);
-        ctx->iv = NULL;
-    }
-    if (ctx->expanded_key != NULL){
-        free(ctx->expanded_key);
-        ctx->expanded_key = NULL;
-    }
-}
-
-void aes_encrypt_once(unsigned char *in, int in_size, unsigned char *key, enum aes_key_size key_size, enum aes_mode mode, unsigned char *iv, unsigned char *out, int *out_size)
+enum aes_status aes_encrypt_once(unsigned char *in, int in_size, unsigned char *key, enum aes_key_size key_size, enum aes_mode mode, unsigned char *iv, unsigned char *out, int *out_size)
 {
     struct aes_ctx_t aes;
-    aes_init(&aes, key, key_size, mode, iv);
-    aes_encrypt(&aes, in, in_size, out, out_size);
-    aes_destroy(&aes);
+    enum aes_status res = aes_init(&aes, key, key_size, mode, iv);
+    if (res != SUCCESS){
+        return res;
+    }
+    res = aes_encrypt(&aes, in, in_size, out, out_size);
+    if (res != SUCCESS){
+        return res;
+    }
+    return SUCCESS;
 }
 
-void aes_decrypt_once(unsigned char *in, int in_size, unsigned char *key, enum aes_key_size key_size, enum aes_mode mode, unsigned char *iv, unsigned char *out, int *out_size)
+enum aes_status aes_decrypt_once(unsigned char *in, int in_size, unsigned char *key, enum aes_key_size key_size, enum aes_mode mode, unsigned char *iv, unsigned char *out, int *out_size)
 {
     struct aes_ctx_t aes;
-    aes_init(&aes, key, key_size, mode, iv);
-    aes_decrypt(&aes, in, in_size, out, out_size);
-    aes_destroy(&aes);
+    enum aes_status res = aes_init(&aes, key, key_size, mode, iv);
+    if (res != SUCCESS){
+        return res;
+    }
+    res = aes_decrypt(&aes, in, in_size, out, out_size);
+    if (res != SUCCESS){
+        return res;
+    }
+    return SUCCESS;
 }

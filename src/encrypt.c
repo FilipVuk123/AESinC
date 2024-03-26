@@ -8,23 +8,47 @@ void sub_bytes(unsigned char *state)
 
 
 
-static void shift_row(unsigned char *state, int nbr)
-{
-    for (int i = 0; i < nbr; i++)
-    {
-        rotate_word(state);
-    }
+// static void shift_row(unsigned char *state, int nbr)
+// {
+//     for (int i = 0; i < nbr; i++)
+//     {
+//         rotate_word(state);
+//     }
+// }
+
+// void shift_rows(unsigned char *state)
+// {
+//     for (int i = 0; i < 4; i++)
+//     {
+//         shift_row(state + i * 4, i);
+//     }
+// }
+
+void shift_rows(unsigned char *state){
+    unsigned char tmp;
+
+    // Shift first row once to the left
+    tmp = state[4];
+    state[4] = state[5];
+    state[5] = state[6];
+    state[6] = state[7];
+    state[7] = tmp;
+
+    // Shift second row twice to the left
+    tmp = state[8];
+    state[8] = state[10];
+    state[10] = tmp;
+    tmp = state[9];
+    state[9] = state[11];
+    state[11] = tmp;
+
+    // Shift third row three times to the left
+    tmp = state[12];
+    state[12] = state[15];
+    state[15] = state[14];
+    state[14] = state[13];
+    state[13] = tmp;
 }
-
-void shift_rows(unsigned char *state)
-{
-    for (int i = 0; i < 4; i++)
-    {
-        shift_row(state + i * 4, i);
-    }
-}
-
-
 
 static void mix_column(unsigned char *column)
 {

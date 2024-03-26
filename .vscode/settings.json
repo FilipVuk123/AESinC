@@ -10,6 +10,7 @@
         "initializer_list": "c",
         "span": "c",
         "valarray": "c",
-        "aes.h": "c"
+        "aes.h": "c",
+        "string.h": "c"
     }
 }

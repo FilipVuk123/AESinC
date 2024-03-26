@@ -10,22 +10,49 @@ void sub_bytes_inv(unsigned char *state)
 
 
 
-static void shift_row_inv(unsigned char *state, int nbr)
-{
+// static void shift_row_inv(unsigned char *state, int nbr)
+// {
+//     unsigned char tmp;
+
+//     for (int i = 0; i < nbr; i++)
+//     {
+//         rotate_word_inv(state);
+//     }
+// }
+
+// void shift_rows_inv(unsigned char *state)
+// {
+//     for (int i = 0; i < 4; i++)
+//     {
+//         shift_row_inv(state + i * 4, i);
+//     }
+// }
+
+void shift_rows_inv(unsigned char *state){
     unsigned char tmp;
 
-    for (int i = 0; i < nbr; i++)
-    {
-        rotate_word_inv(state);
-    }
-}
+    // Shift first row once to the right
+    tmp = state[7];
+    state[7] = state[6];
+    state[6] = state[5];
+    state[5] = state[4];
+    state[4] = tmp;
 
-void shift_rows_inv(unsigned char *state)
-{
-    for (int i = 0; i < 4; i++)
-    {
-        shift_row_inv(state + i * 4, i);
-    }
+    // Shift second row twice to the right
+    tmp = state[8];
+    state[8] = state[10];
+    state[10] = tmp;
+    tmp = state[9];
+    state[9] = state[11];
+    state[11] = tmp;
+
+    // Shift third row three times to the right
+    tmp = state[13];
+    state[13] = state[14];
+    state[14] = state[15];
+    state[15] = state[12];
+    state[12] = tmp;
+
 }
 
 
