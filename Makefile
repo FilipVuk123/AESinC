@@ -1,28 +1,29 @@
-CFLAGS   := -Isrc/include  -g # -O3 -ffast-math -Wall -Wextra -pipe -pedantic
+CFLAGS    := -g -O3 -ffast-math -Wall -Wextra -pipe -pedantic
+IFLAGS	  := -Isrc/include 
 
-SRC_DIR  := src
-BIN_DIR  := bin
-OBJ_DIR  := $(BIN_DIR)/obj
-EXPORT_DIR := export
+SRC_DIR   := src
+BIN_DIR   := bin
+OBJ_DIR   := $(BIN_DIR)/obj
+EXPORT_DIR:= export
+LIB_DIR   := $(EXPORT_DIR)/lib
 
-EXECUTABLE := $(BIN_DIR)/my_program
-SRC      := $(wildcard $(SRC_DIR)/*.c)
-OBJ      := $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRC))
+LIBRARY   := $(LIB_DIR)/libaes.a
+SRC       := $(wildcard $(SRC_DIR)/*.c)
+OBJ       := $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRC))
 
+.PHONY: all clean
 
-.PHONY: all
+all: $(LIBRARY)
 
-all: $(EXECUTABLE)
-
-$(EXECUTABLE): $(OBJ) | $(BIN_DIR)
-	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
+$(LIBRARY): $(OBJ) | $(LIB_DIR)
+	ar rcs $@ $^
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
-	$(CC) $(CFLAGS) -c $< -o $@
+	gcc $(CFLAGS) $(IFLAGS) -c $< -o $@
 
-$(BIN_DIR) $(OBJ_DIR) $(EXPORT_DIR):
+$(BIN_DIR) $(OBJ_DIR) $(EXPORT_DIR) $(LIB_DIR):
 	mkdir -p $@
 
-.PHONY: clean
 clean:
-	rm -r bin/*
+	rm -r $(BIN_DIR)/*
+	rm -r $(LIB_DIR)/*

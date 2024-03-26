@@ -1,6 +1,6 @@
 #include <modes.h>
 
-static void xor_block(unsigned char *in_1, unsigned char *in_2, int in_size, char *out)
+static void xor_block(unsigned char *in_1, unsigned char *in_2, int in_size, unsigned char *out)
 {
     for (int i = 0; i < in_size; ++i)
     {
@@ -21,7 +21,7 @@ static void create_PKCS7_buffer(unsigned char *input_buffer, int input_buffer_si
     }
 }
 
-int aes_cbc_encrypt(unsigned char *in, int in_size, unsigned char *expanded_key, int n_rounds, unsigned char *iv, unsigned char *out, int *out_size)
+void aes_cbc_encrypt(unsigned char *in, int in_size, unsigned char *expanded_key, int n_rounds, unsigned char *iv, unsigned char *out, int *out_size)
 {
     int num_of_blocks = in_size / AES_BLOCK_SIZE;
     int modulo = in_size % AES_BLOCK_SIZE;
@@ -45,10 +45,9 @@ int aes_cbc_encrypt(unsigned char *in, int in_size, unsigned char *expanded_key,
     *out_size += AES_BLOCK_SIZE;
 }
 
-int aes_cbc_decrypt(unsigned char *in, int in_size, unsigned char *expanded_key, int n_rounds, unsigned char *iv, unsigned char *out, int *out_size)
+void aes_cbc_decrypt(unsigned char *in, int in_size, unsigned char *expanded_key, int n_rounds, unsigned char *iv, unsigned char *out, int *out_size)
 {
     int num_of_blocks = in_size / AES_BLOCK_SIZE;
-    int modulo = in_size % AES_BLOCK_SIZE;
 
     unsigned char tmp[16];
 
@@ -65,7 +64,7 @@ int aes_cbc_decrypt(unsigned char *in, int in_size, unsigned char *expanded_key,
     *out_size -= out[in_size - 1];
 }
 
-int aes_ecb_encrypt(unsigned char *in, int in_size, unsigned char *expanded_key, int n_rounds, unsigned char *out, int *out_size)
+void aes_ecb_encrypt(unsigned char *in, int in_size, unsigned char *expanded_key, int n_rounds, unsigned char *out, int *out_size)
 {
     int num_of_blocks = in_size / AES_BLOCK_SIZE;
     int modulo = in_size % AES_BLOCK_SIZE;
@@ -83,10 +82,9 @@ int aes_ecb_encrypt(unsigned char *in, int in_size, unsigned char *expanded_key,
     *out_size += AES_BLOCK_SIZE;
 }
 
-int aes_ecb_decrypt(unsigned char *in, int in_size, unsigned char *expanded_key, int n_rounds, unsigned char *out, int *out_size)
+void aes_ecb_decrypt(unsigned char *in, int in_size, unsigned char *expanded_key, int n_rounds, unsigned char *out, int *out_size)
 {
     int num_of_blocks = in_size / AES_BLOCK_SIZE;
-    int modulo = in_size % AES_BLOCK_SIZE;
 
     *out_size = 0;
     for (int i = 0; i < num_of_blocks; i++)
@@ -114,7 +112,7 @@ static void increment_nonce(unsigned char *nonce)
     }
 }
 
-int aes_ctr_xxcrypt(unsigned char *in, int in_size, unsigned char *expanded_key, int n_rounds, unsigned char *nonce, unsigned char *out, int *out_size)
+void aes_ctr_xxcrypt(unsigned char *in, int in_size, unsigned char *expanded_key, int n_rounds, unsigned char *nonce, unsigned char *out, int *out_size)
 {
     int num_of_blocks = in_size / AES_BLOCK_SIZE;
     int modulo = in_size % AES_BLOCK_SIZE;
@@ -146,7 +144,7 @@ int aes_ctr_xxcrypt(unsigned char *in, int in_size, unsigned char *expanded_key,
     }
 }
 
-int aes_cfb_encrypt(unsigned char *in, int in_size, unsigned char *expanded_key, int n_rounds, unsigned char *iv, unsigned char *out, int *out_size)
+void aes_cfb_encrypt(unsigned char *in, int in_size, unsigned char *expanded_key, int n_rounds, unsigned char *iv, unsigned char *out, int *out_size)
 {
     int num_of_blocks = in_size / AES_BLOCK_SIZE;
     int modulo = in_size % AES_BLOCK_SIZE;
@@ -171,7 +169,7 @@ int aes_cfb_encrypt(unsigned char *in, int in_size, unsigned char *expanded_key,
     }
 }
 
-int aes_cfb_decrypt(unsigned char *in, int in_size, unsigned char *expanded_key, int n_rounds, unsigned char *iv, unsigned char *out, int *out_size)
+void aes_cfb_decrypt(unsigned char *in, int in_size, unsigned char *expanded_key, int n_rounds, unsigned char *iv, unsigned char *out, int *out_size)
 {
     int num_of_blocks = in_size / AES_BLOCK_SIZE;
     int modulo = in_size % AES_BLOCK_SIZE;
@@ -197,7 +195,7 @@ int aes_cfb_decrypt(unsigned char *in, int in_size, unsigned char *expanded_key,
     }
 }
 
-int aes_ofb_xxcrypt(unsigned char *in, int in_size, unsigned char *expanded_key, int n_rounds, unsigned char *iv, unsigned char *out, int *out_size)
+void aes_ofb_xxcrypt(unsigned char *in, int in_size, unsigned char *expanded_key, int n_rounds, unsigned char *iv, unsigned char *out, int *out_size)
 {
     int num_of_blocks = in_size / AES_BLOCK_SIZE;
     int modulo = in_size % AES_BLOCK_SIZE;
