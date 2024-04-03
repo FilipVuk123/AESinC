@@ -5,6 +5,7 @@
 #include <encrypt.h>
 #include <decrypt.h>
 #include <modes.h>
+#include <timer.h>
 
 enum aes_status{
     SUCCESS,

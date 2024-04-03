@@ -1,12 +1,21 @@
 #include <modes.h>
 
-static void xor_block(unsigned char *in_1, unsigned char *in_2, int in_size, unsigned char *out)
+static void xor_blocks(unsigned char *in_1, unsigned char *in_2, int in_size, unsigned char *out)
 {
     for (int i = 0; i < in_size; ++i)
     {
         out[i] = in_1[i] ^ in_2[i];
     }
 }
+
+static void xor_block_by_chunk(unsigned char *block, int block_size, unsigned char *chunk, int chunk_size, unsigned char *out)
+{
+    for (int i = 0; i < block_size; ++i)
+    {
+        out[i] = block[i] ^ chunk[i % chunk_size];
+    }
+}
+
 
 static void create_PKCS7_buffer(unsigned char *input_buffer, int input_buffer_size, int bytes_to_append, unsigned char *output_buffer)
 {
@@ -31,16 +40,16 @@ void aes_cbc_encrypt(unsigned char *in, int in_size, unsigned char *expanded_key
     create_PKCS7_buffer(in + (in_size - modulo), modulo, AES_BLOCK_SIZE - modulo, padding_buffer);
     unsigned char tmp[16];
 
-    xor_block(in, iv, AES_BLOCK_SIZE, tmp);
+    xor_blocks(in, iv, AES_BLOCK_SIZE, tmp);
     aes_encrypt_block(tmp, out, n_rounds, expanded_key);
     *out_size = AES_BLOCK_SIZE;
     for (int i = 0; i < num_of_blocks - 1; i++)
     {
-        xor_block(out + (i * AES_BLOCK_SIZE), in + ((i + 1) * AES_BLOCK_SIZE), AES_BLOCK_SIZE, tmp);
+        xor_blocks(out + (i * AES_BLOCK_SIZE), in + ((i + 1) * AES_BLOCK_SIZE), AES_BLOCK_SIZE, tmp);
         aes_encrypt_block(tmp, out + ((i + 1) * AES_BLOCK_SIZE), n_rounds, expanded_key);
         *out_size += AES_BLOCK_SIZE;
     }
-    xor_block(out + (num_of_blocks - 1) * AES_BLOCK_SIZE, padding_buffer, AES_BLOCK_SIZE, tmp);
+    xor_blocks(out + (num_of_blocks - 1) * AES_BLOCK_SIZE, padding_buffer, AES_BLOCK_SIZE, tmp);
     aes_encrypt_block(tmp, out + num_of_blocks * AES_BLOCK_SIZE, n_rounds, expanded_key);
     *out_size += AES_BLOCK_SIZE;
 }
@@ -52,13 +61,13 @@ void aes_cbc_decrypt(unsigned char *in, int in_size, unsigned char *expanded_key
     unsigned char tmp[16];
 
     aes_decrypt_block(in, tmp, n_rounds, expanded_key);
-    xor_block(tmp, iv, AES_BLOCK_SIZE, out);
+    xor_blocks(tmp, iv, AES_BLOCK_SIZE, out);
     *out_size = AES_BLOCK_SIZE;
 
     for (int i = 0; i < num_of_blocks - 1; i++)
     {
         aes_decrypt_block(in + ((i + 1) * AES_BLOCK_SIZE), tmp, n_rounds, expanded_key);
-        xor_block(tmp, in + (i * AES_BLOCK_SIZE), AES_BLOCK_SIZE, out + ((i + 1) * AES_BLOCK_SIZE));
+        xor_blocks(tmp, in + (i * AES_BLOCK_SIZE), AES_BLOCK_SIZE, out + ((i + 1) * AES_BLOCK_SIZE));
         *out_size += AES_BLOCK_SIZE;
     }
     *out_size -= out[in_size - 1];
@@ -123,7 +132,7 @@ void aes_ctr_xxcrypt(unsigned char *in, int in_size, unsigned char *expanded_key
     memcpy(nonce_tmp, nonce, AES_BLOCK_SIZE);
 
     aes_encrypt_block(nonce, tmp, n_rounds, expanded_key);
-    xor_block(tmp, in, AES_BLOCK_SIZE, out);
+    xor_blocks(tmp, in, AES_BLOCK_SIZE, out);
     *out_size = AES_BLOCK_SIZE;
 
     for (int i = 0; i < num_of_blocks - 1; i++)
@@ -131,7 +140,7 @@ void aes_ctr_xxcrypt(unsigned char *in, int in_size, unsigned char *expanded_key
         increment_nonce(nonce_tmp);
         aes_encrypt_block(nonce_tmp, tmp, n_rounds, expanded_key);
 
-        xor_block(tmp, in + ((i + 1) * AES_BLOCK_SIZE), AES_BLOCK_SIZE, out + ((i + 1) * AES_BLOCK_SIZE));
+        xor_blocks(tmp, in + ((i + 1) * AES_BLOCK_SIZE), AES_BLOCK_SIZE, out + ((i + 1) * AES_BLOCK_SIZE));
         *out_size += AES_BLOCK_SIZE;
     }
 
@@ -139,7 +148,7 @@ void aes_ctr_xxcrypt(unsigned char *in, int in_size, unsigned char *expanded_key
     {
         increment_nonce(nonce_tmp);
         aes_encrypt_block(nonce_tmp, tmp, n_rounds, expanded_key);
-        xor_block(tmp, in + num_of_blocks * AES_BLOCK_SIZE, modulo, out + num_of_blocks * AES_BLOCK_SIZE);
+        xor_blocks(tmp, in + num_of_blocks * AES_BLOCK_SIZE, modulo, out + num_of_blocks * AES_BLOCK_SIZE);
         *out_size += modulo;
     }
 }
@@ -152,19 +161,19 @@ void aes_cfb_encrypt(unsigned char *in, int in_size, unsigned char *expanded_key
     unsigned char tmp[AES_BLOCK_SIZE];
 
     aes_encrypt_block(iv, tmp, n_rounds, expanded_key);
-    xor_block(tmp, in, AES_BLOCK_SIZE, out);
+    xor_blocks(tmp, in, AES_BLOCK_SIZE, out);
     *out_size = AES_BLOCK_SIZE;
     for (int i = 0; i < num_of_blocks - 1; i++)
     {
         aes_encrypt_block(out + i * AES_BLOCK_SIZE, tmp, n_rounds, expanded_key);
-        xor_block(tmp, in + (i + 1) * AES_BLOCK_SIZE, AES_BLOCK_SIZE, out + (i + 1) * AES_BLOCK_SIZE);
+        xor_blocks(tmp, in + (i + 1) * AES_BLOCK_SIZE, AES_BLOCK_SIZE, out + (i + 1) * AES_BLOCK_SIZE);
         *out_size += AES_BLOCK_SIZE;
     }
 
     if (modulo > 0)
     {
         aes_encrypt_block(out + (num_of_blocks - 1) * AES_BLOCK_SIZE, tmp, n_rounds, expanded_key);
-        xor_block(tmp, in + num_of_blocks * AES_BLOCK_SIZE, modulo, out + num_of_blocks * AES_BLOCK_SIZE);
+        xor_blocks(tmp, in + num_of_blocks * AES_BLOCK_SIZE, modulo, out + num_of_blocks * AES_BLOCK_SIZE);
         *out_size += modulo;
     }
 }
@@ -177,20 +186,20 @@ void aes_cfb_decrypt(unsigned char *in, int in_size, unsigned char *expanded_key
     unsigned char tmp[AES_BLOCK_SIZE];
 
     aes_encrypt_block(iv, tmp, n_rounds, expanded_key);
-    xor_block(tmp, in, AES_BLOCK_SIZE, out);
+    xor_blocks(tmp, in, AES_BLOCK_SIZE, out);
     *out_size = AES_BLOCK_SIZE;
 
     for (int i = 0; i < num_of_blocks - 1; i++)
     {
         aes_encrypt_block(in + i * AES_BLOCK_SIZE, tmp, n_rounds, expanded_key);
-        xor_block(tmp, in + (i + 1) * AES_BLOCK_SIZE, AES_BLOCK_SIZE, out + (i + 1) * AES_BLOCK_SIZE);
+        xor_blocks(tmp, in + (i + 1) * AES_BLOCK_SIZE, AES_BLOCK_SIZE, out + (i + 1) * AES_BLOCK_SIZE);
         *out_size += AES_BLOCK_SIZE;
     }
 
     if (modulo > 0)
     {
         aes_encrypt_block(in + (num_of_blocks - 1) * AES_BLOCK_SIZE, tmp, n_rounds, expanded_key);
-        xor_block(tmp, in + num_of_blocks * AES_BLOCK_SIZE, modulo, out + num_of_blocks * AES_BLOCK_SIZE);
+        xor_blocks(tmp, in + num_of_blocks * AES_BLOCK_SIZE, modulo, out + num_of_blocks * AES_BLOCK_SIZE);
         *out_size += modulo;
     }
 }
@@ -203,20 +212,20 @@ void aes_ofb_xxcrypt(unsigned char *in, int in_size, unsigned char *expanded_key
     unsigned char tmp[AES_BLOCK_SIZE];
 
     aes_encrypt_block(iv, tmp, n_rounds, expanded_key);
-    xor_block(in, tmp, AES_BLOCK_SIZE, out);
+    xor_blocks(in, tmp, AES_BLOCK_SIZE, out);
     *out_size = AES_BLOCK_SIZE;
 
     for (int i = 0; i < num_of_blocks - 1; i++)
     {
         aes_encrypt_block(tmp, tmp, n_rounds, expanded_key);
-        xor_block(in + (i + 1) * AES_BLOCK_SIZE, tmp, AES_BLOCK_SIZE, out + (i + 1) * AES_BLOCK_SIZE);
+        xor_blocks(in + (i + 1) * AES_BLOCK_SIZE, tmp, AES_BLOCK_SIZE, out + (i + 1) * AES_BLOCK_SIZE);
         *out_size += AES_BLOCK_SIZE;
     }
 
     if (modulo > 0)
     {
         aes_encrypt_block(tmp, tmp, n_rounds, expanded_key);
-        xor_block(in + num_of_blocks * AES_BLOCK_SIZE, tmp, modulo, out + num_of_blocks * AES_BLOCK_SIZE);
+        xor_blocks(in + num_of_blocks * AES_BLOCK_SIZE, tmp, modulo, out + num_of_blocks * AES_BLOCK_SIZE);
         *out_size += modulo;
     }
 }

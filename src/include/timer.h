@@ -19,12 +19,14 @@
 #define S_TO_US(sec)   ((double)((sec)  * (double)(1e6)))
 #define S_TO_MS(sec)   ((double)((sec)  * (double)(1e3)))
 
-struct timespec time_now(void);
+typedef struct timespec timer;
 
-double get_time_diff_usec(struct timespec const start, struct timespec const stop);
+timer time_now();
 
-double get_time_diff_msec(struct timespec const start, struct timespec const stop);
+double get_time_diff_usec(timer const start, timer const stop);
 
-double get_time_diff_sec(struct timespec const start, struct timespec const stop);
+double get_time_diff_msec(timer const start, timer const stop);
+
+double get_time_diff_sec(timer const start, timer const stop);
 
 #endif // CLOCK_H

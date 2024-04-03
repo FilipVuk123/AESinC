@@ -12,6 +12,14 @@
         "valarray": "c",
         "aes.h": "c",
         "string.h": "c",
-        "time.h": "c"
+        "time.h": "c",
+        "stdio.h": "c",
+        "clock.h": "c",
+        "time_t.h": "c",
+        "*.tcc": "c",
+        "chrono": "c",
+        "condition_variable": "c",
+        "ctime": "c",
+        "mutex": "c"
     }
 }

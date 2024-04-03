@@ -1,7 +1,7 @@
 #include <aes.h>
 #include <stdio.h>
 
-int main(int argc, char *argv[])
+int main()
 {
 
     unsigned char key128[] = {"myfirstaescipher"};
@@ -22,14 +22,18 @@ int main(int argc, char *argv[])
 
 
     printf("\nKEYSIZE 256\n");
+    timer clock_encrypt, clock_decrypt;
+
     for (int i = 0; i < 5; i++)
     {
+        clock_encrypt = time_now();
         aes_encrypt_once(plaintext, plaintext_size, key256, SIZE_32, i, iv, ciphertext, &outsize);
+        printf("Encrypt time in ms: %f\n", get_time_diff_msec(clock_encrypt, time_now()));
         printf("\nCiphertext (HEX format):\n");
         print_buffer_hex(ciphertext, outsize);
-
+        clock_decrypt = time_now();
         aes_decrypt_once(ciphertext, outsize, key256, SIZE_32, i, iv, decryptedtext, &outsize);
-
+        printf("Decrypt time in ms: %f\n", get_time_diff_msec(clock_decrypt, time_now()));
         printf("\nDecrypted text (HEX format):\n");
 
         if (equal_buffers(plaintext, decryptedtext, outsize))

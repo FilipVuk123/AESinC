@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -std=c99 -I../../src/include
+CFLAGS = -Wall -Wextra -std=gnu99 -I../../src/include
 LDFLAGS = -L../lib
 LIBS = -laes
 

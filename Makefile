@@ -1,4 +1,4 @@
-CFLAGS    := -g -O3 -ffast-math -Wall -Wextra -pipe -pedantic
+CFLAGS    := -g -O3 -ffast-math -Wall -Wextra -pipe -pedantic -std=gnu99
 IFLAGS	  := -Isrc/include 
 
 SRC_DIR   := src
