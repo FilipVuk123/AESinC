@@ -11,6 +11,7 @@
         "span": "c",
         "valarray": "c",
         "aes.h": "c",
-        "string.h": "c"
+        "string.h": "c",
+        "time.h": "c"
     }
 }
