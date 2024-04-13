@@ -40,7 +40,7 @@ int main()
     // Or encrypt and decrypt as API
 
     // Encrypt
-    
+
     struct aes_ctx_t aes_encrypt;
     aes_init(&aes_encrypt, key128, SIZE_16, CBC, iv);
     aes_encrypt(&aes_encrypt, plaintext, plaintext_size, ciphertext, &outsize);
@@ -50,7 +50,7 @@ int main()
     struct aes_ctx_t aes_decrypt;
     
     aes_init(&aes_decrypt, key128, SIZE_16, CBC, iv);
-    aes_decrypt(&aes_decrypt, plaintext, plaintext_size, out, &outsize);
+    aes_decrypt(&aes_decrypt, ciphertext, outsize, decryptedtext, &outsize);
     
 
     return 0;
