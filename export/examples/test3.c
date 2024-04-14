@@ -1,12 +1,13 @@
 #include <aes.h>
 #include <stdio.h>
 
+// This example runs through all the modes of operation and performs encryption / decryption while calculating algorithm latency for 192bit (24 byte) key
+
 int main()
 {
 
-    unsigned char key128[] = {"myfirstaescipher"};
     unsigned char key192[] = {"myfirstaesciphermyfirsta"};
-    unsigned char key256[] = {"myfirstaesciphermyfirstaescipher"};
+    
     unsigned char iv[] = {"veryfirstinitvez"};
 
     unsigned char plaintext[] = {"abcdef1123456789  0filip123321a|bcdeabcd  ef1234567890fil??ip123321a{]}  bcde!!!"};
