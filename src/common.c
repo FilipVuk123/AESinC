@@ -294,7 +294,6 @@ void print_buffer_hex(unsigned char *buffer, int size)
 
 void generate_random_bytes(unsigned char *buffer, int num_bytes)
 {
-    srand(time(NULL));
     for (int i = 0; i < num_bytes; ++i)
     {
         buffer[i] = rand() % 256;

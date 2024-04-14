@@ -42,24 +42,24 @@ int main()
 
     // Encrypt
 
-    struct aes_ctx_t aes_encrypt;
-    aes_init(&aes_encrypt, key128, SIZE_16, CBC, iv);
-    aes_encrypt(&aes_encrypt, plaintext, plaintext_size, ciphertext, &outsize);
+    struct aes_ctx_t aes_encrypt_ctx;
+    aes_init(&aes_encrypt_ctx, key128, SIZE_16, CBC, iv);
+    aes_encrypt(&aes_encrypt_ctx, plaintext, plaintext_size, ciphertext, &outsize);
     
     // Decrypt
     
-    struct aes_ctx_t aes_decrypt;
+    struct aes_ctx_t aes_decrypt_ctx;
     
-    aes_init(&aes_decrypt, key128, SIZE_16, CBC, iv);
-    aes_decrypt(&aes_decrypt, ciphertext, outsize, decryptedtext, &outsize);
+    aes_init(&aes_decrypt_ctx, key128, SIZE_16, CBC, iv);
+    aes_decrypt(&aes_decrypt_ctx, ciphertext, outsize, decryptedtext, &outsize);
 
     // to change iv
     unsigned char new_iv[] = {"0123456789abcdef"};
-    aes_set_iv(&aes_encrypt, new_iv);
+    aes_set_iv(&aes_encrypt_ctx, new_iv);
 
     // to change the key
     unsigned char new_key[] = {"0123456789abcdef"};
-    aes_set_key(&aes_encrypt, new_key, SIZE_16);  
+    aes_set_key(&aes_encrypt_ctx, new_key, SIZE_16);  
 
     // to generate a random iv or key use
     unsigned char iv[16]; 
