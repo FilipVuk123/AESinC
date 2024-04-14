@@ -15,19 +15,20 @@ To use the AES implementation in your project, you can directly include the prov
 int main()
 {
 
-    unsigned char key128[] = {"myfirstaescipher"};
-    unsigned char iv[] = {"veryfirstinitvec"};
+    unsigned char key128[] = {"myfirstaescipher"}; // Keys can be 16, 24 and 32 bytes long
+    unsigned char iv[] = {"veryfirstinitvec"}; // IV is 16 bytes long in all key sizes and modes of operation!!!
 
     unsigned char plaintext[] = {"abcdef1123456789  0filip123321a|bcdeabcd  ef1234567890fil??ip123321a{]}  bcde!!!"};
     int plaintext_size = strlen(plaintext);
     int outsize;
 
+    // creating buffer for for outputs - make sure you allocate enough space. The easiest is to just allocate: plaintext_size + AES_BLOCK_SIZE
     unsigned char ciphertext[plaintext_size + AES_BLOCK_SIZE];
 
     unsigned char decryptedtext[plaintext_size + AES_BLOCK_SIZE];
 
 
-    // Encrypt decrypt once
+    // Encrypt decrypt once - use when you just need to encrypt or decrypt something once with one key and one iv
     
     aes_encrypt_once(plaintext, plaintext_size, key128, SIZE_16, CBC, iv, ciphertext, &outsize);
 
@@ -37,7 +38,7 @@ int main()
     .
     .
 
-    // Or encrypt and decrypt as API
+    // Or encrypt and decrypt as API - use when you need to encrypt / decrypt multiple times. Then you should use different iv for every single encrpyt (on every single aes_encrypt)
 
     // Encrypt
 
@@ -51,7 +52,18 @@ int main()
     
     aes_init(&aes_decrypt, key128, SIZE_16, CBC, iv);
     aes_decrypt(&aes_decrypt, ciphertext, outsize, decryptedtext, &outsize);
-    
+
+    // to change iv
+    unsigned char new_iv[] = {"0123456789abcdef"};
+    aes_set_iv(&aes_encrypt, new_iv);
+
+    // to change the key
+    unsigned char new_key[] = {"0123456789abcdef"};
+    aes_set_key(&aes_encrypt, new_key, SIZE_16);  
+
+    // to generate a random iv or key use
+    unsigned char iv[16]; 
+    generate_random_bytes(iv, 16);
 
     return 0;
 }
