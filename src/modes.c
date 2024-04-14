@@ -1,5 +1,13 @@
 #include <modes.h>
 
+/**
+ * @brief XOR operation between two blocks of data.
+ * 
+ * @param in_1 The first input block.
+ * @param in_2 The second input block.
+ * @param in_size The size of the input blocks.
+ * @param out The output block.
+ */
 static void xor_blocks(unsigned char *in_1, unsigned char *in_2, int in_size, unsigned char *out)
 {
     for (int i = 0; i < in_size; ++i)
@@ -8,6 +16,15 @@ static void xor_blocks(unsigned char *in_1, unsigned char *in_2, int in_size, un
     }
 }
 
+/**
+ * @brief XOR operation between a block of data and a repeating chunk of data.
+ * 
+ * @param block The input block.
+ * @param block_size The size of the input block.
+ * @param chunk The repeating chunk.
+ * @param chunk_size The size of the repeating chunk.
+ * @param out The output block.
+ */
 static void xor_block_by_chunk(unsigned char *block, int block_size, unsigned char *chunk, int chunk_size, unsigned char *out)
 {
     for (int i = 0; i < block_size; ++i)
@@ -16,7 +33,14 @@ static void xor_block_by_chunk(unsigned char *block, int block_size, unsigned ch
     }
 }
 
-
+/**
+ * @brief Create a PKCS7 padding buffer for the input buffer.
+ * 
+ * @param input_buffer The input buffer.
+ * @param input_buffer_size The size of the input buffer.
+ * @param bytes_to_append The number of bytes to append for padding.
+ * @param output_buffer The output buffer with PKCS7 padding.
+ */
 static void create_PKCS7_buffer(unsigned char *input_buffer, int input_buffer_size, int bytes_to_append, unsigned char *output_buffer)
 {
     int padded_size = input_buffer_size + bytes_to_append;

@@ -1,9 +1,7 @@
 
 #include "timer.h"
-
 #include <time.h> // clock_gettime
 
-//=========================================================
 
 timer time_now()
 {
@@ -15,9 +13,6 @@ timer time_now()
 
     return start_time;
 }
-
-//=========================================================
-
 
 double get_time_diff_usec(timer const start, timer const stop)
 {
@@ -34,4 +29,3 @@ double get_time_diff_sec(timer const start, timer const stop)
     return (stop.tv_nsec - start.tv_sec) + NS_TO_S(stop.tv_nsec - start.tv_nsec);
 }
 
-//=========================================================

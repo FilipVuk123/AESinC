@@ -19,14 +19,44 @@
 #define S_TO_US(sec)   ((double)((sec)  * (double)(1e6)))
 #define S_TO_MS(sec)   ((double)((sec)  * (double)(1e3)))
 
+/**
+ * @brief Represents a timer structure based on timespec.
+ */
 typedef struct timespec timer;
 
+/**
+ * @brief Get the current time.
+ * 
+ * @return timer The current time.
+ */
 timer time_now();
 
+/**
+ * @brief Get the time difference in microseconds.
+ * 
+ * @param start The starting time.
+ * @param stop The stopping time.
+ * @return double The time difference in microseconds.
+ */
 double get_time_diff_usec(timer const start, timer const stop);
 
+/**
+ * @brief Get the time difference in milliseconds.
+ * 
+ * @param start The starting time.
+ * @param stop The stopping time.
+ * @return double The time difference in milliseconds.
+ */
 double get_time_diff_msec(timer const start, timer const stop);
 
+/**
+ * @brief Get the time difference in seconds.
+ * 
+ * @param start The starting time.
+ * @param stop The stopping time.
+ * @return double The time difference in seconds.
+ */
 double get_time_diff_sec(timer const start, timer const stop);
+
 
 #endif // CLOCK_H
