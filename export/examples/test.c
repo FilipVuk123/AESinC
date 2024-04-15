@@ -27,7 +27,7 @@ int main()
     for (int i = 0; i < 5; i++)
     {
         clock_encrypt = time_now();
-        aes_encrypt_once(plaintext, plaintext_size, key128, SIZE_16, i, iv, ciphertext, &outsize);
+        aes_encrypt_once(plaintext, 13, key128, SIZE_16, i, iv, ciphertext, &outsize);
         printf("Encrypt time in ms: %f\n", get_time_diff_msec(clock_encrypt, time_now()));
         printf("\nCiphertext (HEX format):\n");
         print_buffer_hex(ciphertext, outsize);
@@ -35,6 +35,7 @@ int main()
         aes_decrypt_once(ciphertext, outsize, key128, SIZE_16, i, iv, decryptedtext, &outsize);
         printf("Decrypt time in ms: %f\n", get_time_diff_msec(clock_decrypt, time_now()));
         printf("\nDecrypted text (HEX format):\n");
+        print_buffer_hex(decryptedtext, outsize);
     if (equal_buffers(plaintext, decryptedtext, outsize))
     {
         printf("True\n");
