@@ -13,8 +13,11 @@ def encrypt(plain_text):
     cipher_text = cipher.encrypt(plain_text)  # Encrypt the plaintext
     return cipher_text.hex()  # Return the ciphertext as a hex string
 
-# Example usage: encrypt a sample text
-test = b"No right of private conversation was enumerated in the Constitution. I don't suppose it occurred to anyone at the time that it could be prevented"
+# Read the known test message from 'test_message.txt'
+with open("test_message.txt", "rb") as f:
+    test = f.read().strip()
+
+# Encrypt the test message
 encrypted_test = encrypt(test)
 
 # Example usage: encrypt the contents of 'flag.txt'

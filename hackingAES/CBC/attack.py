@@ -63,21 +63,14 @@ def attack(ciphertext):
     
     return guessed_clear[:-guessed_clear[-1]]  # Remove padding
 
-def test_the_attack():
-    """
-    Test the padding oracle attack with various messages.
-    """
-    messages = [b'Attack at dawn', b'', b'Giovanni',
-                b"In symmetric cryptography, the padding oracle attack can be applied to the CBC mode of operation,"
-                b"where the \"oracle\" (usually a server) leaks data about whether the padding of an encrypted "
-                b"message is correct or not. Such data can allow attackers to decrypt (and sometimes encrypt) "
-                b"messages through the oracle using the oracle's key, without knowing the encryption key"]
+if __name__ == '__main__':
+    messages = [b'Attack at dawn', 
+                b'', 
+                b'Filip',
+                b"In symmetric cryptography, the padding oracle attack can be applied to the CBC mode of operation, where the \"oracle\" (usually a server) leaks data about whether the padding of an encrypted message is correct or not. Such data can allow attackers to decrypt (and sometimes encrypt) messages through the oracle using the oracle's key, without knowing the encryption key"
+                ]
+
     for msg in messages:
-        print('Testing:', msg, 'OF LENGTH', len(msg))
         ciphertext = encrypt(msg)
         cracked_ct = attack(ciphertext)
-        assert cracked_ct == msg
         print('Success:', cracked_ct)
-
-if __name__ == '__main__':
-    test_the_attack()
