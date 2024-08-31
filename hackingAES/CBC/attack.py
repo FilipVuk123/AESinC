@@ -39,14 +39,14 @@ def attack(ciphertext):
     
     for block_n in range(len(blocks) - 1, 0, -1):  # Process each pair of blocks
         spliced_ciphertext = blocks[block_n - 1] + blocks[block_n]  # Pair of blocks to attack
-        decoded_bytes = b'?' * BLOCK_SIZE  # Placeholder for decrypted bytes
+        decoded_bytes = b'a' * BLOCK_SIZE  # Placeholder for decrypted bytes
 
         for byte in range(BLOCK_SIZE - 1, -1, -1):  # Process each byte in the block
             new_pad_len = BLOCK_SIZE - byte
             hacked_ciphertext_tail = b''
 
-            for padder_index in range(1, new_pad_len):
-                hacked_ciphertext_tail += bytearray([new_pad_len ^ decoded_bytes[byte + padder_index]])
+            for pad_index in range(1, new_pad_len):
+                hacked_ciphertext_tail += bytearray([new_pad_len ^ decoded_bytes[byte + pad_index]])
             
             for i in range(256):  # Try all possible byte values
                 attack_str = bytearray([(i ^ spliced_ciphertext[byte])])
